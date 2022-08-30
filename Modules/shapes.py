@@ -55,9 +55,17 @@ def triangle_rule(image_shape: tuple):
                         for i in range(3)]
     return parameterization
 
+def choose_size(bbox_specification: dict):
+    """Chooses a random size within the bounds in specification"""
+    min_size = bbox_specification['min_size']
+    max_size = bbox_specification['max_size']
+
+    size = random.randint(min_size, max_size)
+    return size
+
 def bounding_box_rule(image_shape: tuple, specifications: dict):
     """Rule for both squares and circles"""
-    size = specifications['size']
+    size = choose_size(specifications)
     starting_point = sample_points_within(image_shape=image_shape,
                                           number_of_points=1)
     other_point = tuple(point + size for point in starting_point)
