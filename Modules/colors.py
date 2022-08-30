@@ -1,0 +1,7 @@
+import colorsys
+
+HUE_RANGE = 360
+SATURATION_RANGE = 255
+VALUE_RANGE = 255
+
+
