@@ -1,5 +1,14 @@
+"""
+Code to randomly generate colors
+
+
+This code has some elements that I would like to improve.
+Specifically, there are a lot of hard coded values that I would like to
+address.
+"""
 import colorsys
 import random
+import math
 
 KNOWN_COLORS = [0, 30, 60, 90, 120, 210, 240, 270]
 
@@ -13,16 +22,16 @@ default_hls_settings = {'lightness': 67,
 def normalize_hls(coordinates: tuple):
     """normalizes the hls coordinates"""
     hue, lightness, saturation = coordinates
-    return (hue / HSL_PARAMETERS['hue'],
-            lightness / HSL_PARAMETERS['lightness'],
-            saturation / HSL_PARAMETERS['saturation'])
+    return (hue / HLS_PARAMETERS['hue'],
+            lightness / HLS_PARAMETERS['lightness'],
+            saturation / HLS_PARAMETERS['saturation'])
 
 def rgb_scaler(value: float):
+    """converts a single float value to rgb"""
     rounding_safe_scalar = min(1.0, value)
     if rounding_safe_scalar == 1.0:
         return 255
-    else:
-        return value * 256
+    return value * 256
 
 def to_rgb(normed_hls: tuple):
     """produces an rgb tuple"""
@@ -34,7 +43,7 @@ def convert_hls_rgb(unnormed_coord: tuple):
 
 class ColorPicker():
     """Callable that chooses N colors for an image"""
-    def __init__(self, hue_codes: list, hls_parameter: dict):
+    def __init__(self, hue_codes: list, hls_parameters: dict):
         self.hues = hue_codes
         self.hls_parameters = hls_parameters
 
@@ -53,4 +62,4 @@ class ColorPicker():
                              'there are only {len(self.hues)} hue codes'))
         chosen_colors = random.sample(population=self.hues,
                              k=n)
-        return [self.get_color(hue_code) for hue_code in chosen_colors
+        return [self.get_color(hue_code) for hue_code in chosen_colors]
