@@ -1,7 +1,56 @@
 import colorsys
+import random
 
-HUE_RANGE = 360
-SATURATION_RANGE = 255
-VALUE_RANGE = 255
+KNOWN_COLORS = [0, 30, 60, 90, 120, 210, 240, 270]
 
+HLS_PARAMETERS = {'hue':360,
+                  'lightness':100,
+                  'saturation':100,}
 
+default_hls_settings = {'lightness': 67,
+                        'saturation': 41,}
+
+def normalize_hls(coordinates: tuple):
+    """normalizes the hls coordinates"""
+    hue, lightness, saturation = coordinates
+    return (hue / HSL_PARAMETERS['hue'],
+            lightness / HSL_PARAMETERS['lightness'],
+            saturation / HSL_PARAMETERS['saturation'])
+
+def rgb_scaler(value: float):
+    rounding_safe_scalar = min(1.0, value)
+    if rounding_safe_scalar == 1.0:
+        return 255
+    else:
+        return value * 256
+
+def to_rgb(normed_hls: tuple):
+    """produces an rgb tuple"""
+    return tuple( math.floor(rgb_scaler(value)) for value in normed_hls)
+
+def convert_hls_rgb(unnormed_coord: tuple):
+    """changes an unnormed coord in hls to an unnormed rgb coord"""
+    return to_rgb(colorsys.hls_to_rgb(*normalize_hls(unnormed_coord)))
+
+class ColorPicker():
+    """Callable that chooses N colors for an image"""
+    def __init__(self, hue_codes: list, hls_parameter: dict):
+        self.hues = hue_codes
+        self.hls_parameters = hls_parameters
+
+    def get_color(self, hue_code):
+        """Gets an rgb code from hue code and available information"""
+        hls_coordinates = (hue_code,
+                           self.hls_parameters['lightness'],
+                           self.hls_parameters['saturation'])
+        rgb_coordinate = convert_hls_rgb(hls_coordinates)
+        return rgb_coordinate
+
+    def __call__(self, n: int):
+        """returns N hue codes"""
+        if n > len(self.hues):
+            raise Exception(('Usertrying to sample {n} colors, but '
+                             'there are only {len(self.hues)} hue codes'))
+        chosen_colors = random.sample(population=self.hues,
+                             k=n)
+        return [self.get_color(hue_code) for hue_code in chosen_colors
