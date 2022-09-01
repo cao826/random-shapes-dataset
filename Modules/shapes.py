@@ -47,9 +47,11 @@ def sample_points_within(image_shape: tuple, number_of_points: int):
 def triangle_rule(image_shape: tuple):
     """Generates a triangle within the image shape specified"""
     height, width = image_shape
-    x_coordinates = random.sample(population=range(width),
+    sample_size = min(height, width)
+    sample_space = range(sample_size)
+    x_coordinates = random.sample(population=sample_space,
                                   k=3)
-    y_coordinates = random.sample(population=range(height),
+    y_coordinates = random.sample(population=sample_space,
                                   k=3)
     parameterization = [(x_coordinates[i], y_coordinates[i])
                         for i in range(3)]
