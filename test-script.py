@@ -13,6 +13,8 @@ from Modules import shapes
 from Modules import colors
 from Modules import image_maker
 
+savepath = '../throwaway/'
+
 color_picker = colors.ColorPicker(colors.KNOWN_COLORS, colors.default_hls_settings)
 
 img_generator = image_maker.ImageMaker(image_shape=(224, 224),
@@ -31,10 +33,12 @@ img_generator = image_maker.ImageMaker(image_shape=(224, 224),
                                        ]
 )
 
-image_instance = img_generator()
+#image_maker.make_full_image_analysis(image_as_array, image_instance, savepath)
 
-image = image_maker.construct_image(image_instance)
+for i in range(40):
+    image_instance = img_generator()
 
-image_as_array = np.array(image)
+    image = image_maker.construct_image(image_instance)
 
-image_maker.make_full_image_analysis(image_as_array, image_instance)
+    image_as_array = np.array(image)
+    image_maker.show_an_example(image_as_array, image_instance)

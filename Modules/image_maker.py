@@ -1,4 +1,6 @@
 """creates the images"""
+import os
+import string
 import random
 import numpy as np
 from PIL import Image, ImageDraw
@@ -83,7 +85,10 @@ def make_patches(bbox_dict):
     """makes all patches for all of the shapes"""
     return [make_patch(bbox) for bbox in bbox_dict.values()]
 
-def make_full_image_analysis(image_array, image_instance):
+def make_savename():
+    return ''.join(random.choices(string.ascii_lowercase, k=5)) + '.png'
+
+def make_full_image_analysis(image_array, image_instance, savepath):
     """makes everything we need to make the full plot of all the masksk and ground truth boxes"""
     mask_dict = create_all_masks(image_array, image_instance)
     bbox_dict = get_bbox_dict(mask_dict)
@@ -102,9 +107,28 @@ def make_full_image_analysis(image_array, image_instance):
         axes.imshow(mask, cmap='gray')
         axes.axis('off')
         i+=1
+    savename = make_savename()
+    full_savepath = os.path.join(savepath, savename)
+    plt.savefig(full_savepath)
+
+
+def show_an_example(image_array, image_instance):
+    """display an image and then close it"""
+    mask_dict = create_all_masks(image_array, image_instance)
+    bbox_dict = get_bbox_dict(mask_dict)
+    number_of_axes = 2 + len(mask_dict)
+    bbox_patches = make_patches(bbox_dict)
+    fig, axs = plt.subplots(1,2, figsize=(6, 4))
+    axs[0].imshow(image_array)
+    axs[0].axis('off')
+    axs[1].imshow(image_array)
+    axs[1].axis('off')
+    for patch in bbox_patches:
+        axs[1].add_patch(patch)
     plt.show(block=False)
-    plt.pause(6.5)
+    plt.pause(1.5)
     plt.close()
+
 
 class ImageMaker():
     """class that makes the image"""
