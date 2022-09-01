@@ -148,6 +148,7 @@ class ImageMaker():
                 for shape in random.sample(population=self.shapes,
                                            k=number_of_shapes)
                 }
+        random.shuffle(self.shapes)
         return chosen_shapes
 
     def __call__(self):
