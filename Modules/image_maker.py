@@ -3,6 +3,9 @@ import os
 import string
 import random
 import numpy as np
+import sys
+sys.path.insert(1, '/data/colivares/random-shapes-dataset/Modules')
+import colors, shapes
 from PIL import Image, ImageDraw
 import matplotlib.pyplot as plt
 from matplotlib import patches
@@ -188,3 +191,41 @@ def extract_bboxes(mask):
             x1, x2, y1, y2 = 0, 0, 0, 0
         boxes[i] = np.array([y1, x1, y2, x2])
     return boxes.astype(np.int32)
+
+"""
+Here I am adding code that I use to
+generate the data that I will train the
+initial FPN RPN with
+"""
+canvas_size = (600, 600)
+color_picker = colors.ColorPicker(
+    colors.KNOWN_COLORS,
+    colors.default_hls_settings
+)
+debug_image_generator = ImageMaker(image_shape=canvas_size,
+                                   color_picker=color_picker,
+                                   number_of_colors=4,
+                                   shapes = [
+                                       shapes.Triangle(),
+                                       shapes.Circle(
+                                           specifications={
+                                               'min_size': 80,
+                                               'max_size': 220
+                                            }),
+                                       shapes.Square(
+                                           specifications={
+                                               'min_size': 35,
+                                               'max_size': 250
+                                               })
+                                           ],
+                                   )
+
+def make_datapoint():
+    """
+    Generate a single 600x600 image for training
+    the rpn
+    """
+    image_meta = debug_image_generator()
+    image = construct_image(image_meta)
+    labels = create_all_masks(np.array(image), image_meta)
+    return image, labels
